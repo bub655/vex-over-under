@@ -1,11 +1,5 @@
 #include "main.h"
 
-/**
- * A callback function for LLEMU's center button.
- *
- * When this callback is fired, it will toggle line 2 of the LCD text between
- * "I was pressed!" and nothing.
- */
 void on_center_button() {
 	static bool pressed = false;
 	pressed = !pressed;
@@ -16,12 +10,8 @@ void on_center_button() {
 	}
 }
 
-/**
- * Runs initialization code. This occurs as soon as the program is started.
- *
- * All other competition modes are blocked by initialize; it is recommended
- * to keep execution time for this mode under a few seconds.
- */
+//Runs initialization code. This occurs as soon as the program is started.
+//All other competition modes are blocked by initialize; it is recommended to keep execution time for this mode under a few seconds.
 void initialize() {
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "Hello PROS User!");
@@ -29,11 +19,7 @@ void initialize() {
 	pros::lcd::register_btn1_cb(on_center_button);
 }
 
-/**
- * Runs while the robot is in the disabled state of Field Management System or
- * the VEX Competition Switch, following either autonomous or opcontrol. When
- * the robot is enabled, this task will exit.
- */
+//Runs when robot is in disabled state of Field Management System or VEX Competition Switch, following either autonomous or opcontrol. When the robot is enabled, this task will exit.
 void disabled() {}
 
 /**
@@ -61,9 +47,9 @@ void competition_initialize() {}
 void autonomous() {}
 
 /**
- * Runs the operator control code. This function will be started in its own task
- * with the default priority and stack size whenever the robot is enabled via
- * the Field Management System or the VEX Competition Switch in the operator
+ * Runs operator control code. Will be started in its own task
+ * with default priority and stack size when robot is enabled via
+ * Field Management System or VEX Competition Switch in operator
  * control mode.
  *
  * If no competition control is connected, this function will run immediately
@@ -73,7 +59,7 @@ void autonomous() {}
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-void opcontrol() {
+/*void opcontrol() {
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
 	pros::Motor left_mtr(1);
 	pros::Motor right_mtr(2);
@@ -90,4 +76,29 @@ void opcontrol() {
 
 		pros::delay(20);
 	}
+}*/
+void opcontrol() {
+    int leftJoystick, rightJoystick;
+    bool buttonR1Pressed;
+    while (true) {
+        // Get joystick values
+        leftJoystick = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        rightJoystick = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+
+        // Check if Button R1 is pressed
+        buttonR1Pressed = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
+
+        // Set motor velocities based on joystick inputs and button state
+        motor6.move_velocity(leftJoystick);
+        motor9.move_velocity(rightJoystick);
+
+        // Check if Button R1 is pressed and set the motor velocity to 1 if true
+        if (buttonR1Pressed) {
+            motor13.move_velocity(5);
+        } else {
+            // If not pressed, stop the motor
+            motor13.move_velocity(0);
+        }
+        pros::delay(20); // Typical delay in an opcontrol loop
+    }
 }
