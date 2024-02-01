@@ -9,16 +9,16 @@ ASSET(second_txt);
 ASSET(third_txt);
 
 Controller controller(E_CONTROLLER_MASTER);
-Motor motor_lf(4, E_MOTOR_GEARSET_06, true);
-Motor motor_lb(5, E_MOTOR_GEARSET_06, true);
-Motor motor_lt(6, E_MOTOR_GEARSET_06, false);
-Motor motor_rf(7, E_MOTOR_GEARSET_06, false);
-Motor motor_rb(8, E_MOTOR_GEARSET_06, false);
-Motor motor_rt(10, E_MOTOR_GEARSET_06, true);
-Motor intake(14, true);
+Motor motor_rf(4, E_MOTOR_GEARSET_06, false);
+Motor motor_rm(5, E_MOTOR_GEARSET_06, false);
+Motor motor_rb(6, E_MOTOR_GEARSET_06, true);
+Motor motor_lf(7, E_MOTOR_GEARSET_06, true);
+Motor motor_lm(8, E_MOTOR_GEARSET_06, true);
+Motor motor_lb(9, E_MOTOR_GEARSET_06, false);
+Motor intake(18, true);
 Motor flywheel(11, true);
-Motor_Group leftDrive({motor_lf, motor_lb, motor_lt});
-Motor_Group rightDrive({motor_rf, motor_rb, motor_rt});
+Motor_Group rightDrive({motor_rf, motor_rm, motor_rb});
+Motor_Group leftDrive({motor_lf, motor_lm, motor_lb});
 ADIDigitalOut lift('A');
 ADIDigitalOut hang('B');
 ADIDigitalOut leftwing('C');
@@ -104,12 +104,12 @@ void screenTask()
 void initialize()
 {
 	lcd::initialize();
-	motor_lb.set_brake_mode(E_MOTOR_BRAKE_COAST);
-	motor_lf.set_brake_mode(E_MOTOR_BRAKE_COAST);
-	motor_lt.set_brake_mode(E_MOTOR_BRAKE_COAST);
-	motor_rb.set_brake_mode(E_MOTOR_BRAKE_COAST);
 	motor_rf.set_brake_mode(E_MOTOR_BRAKE_COAST);
-	motor_rt.set_brake_mode(E_MOTOR_BRAKE_COAST);
+	motor_rm.set_brake_mode(E_MOTOR_BRAKE_COAST);
+	motor_rb.set_brake_mode(E_MOTOR_BRAKE_COAST);
+	motor_lf.set_brake_mode(E_MOTOR_BRAKE_COAST);
+	motor_lm.set_brake_mode(E_MOTOR_BRAKE_COAST);
+	motor_lb.set_brake_mode(E_MOTOR_BRAKE_COAST);
 	flywheel.set_brake_mode(E_MOTOR_BRAKE_COAST);
 	intake.set_brake_mode(E_MOTOR_BRAKE_HOLD);
 	chassis.calibrate();
@@ -350,12 +350,12 @@ void autonomous()
 void opcontrol()
 {
 
-	motor_lb.set_brake_mode(E_MOTOR_BRAKE_COAST);
-	motor_lf.set_brake_mode(E_MOTOR_BRAKE_COAST);
-	motor_lt.set_brake_mode(E_MOTOR_BRAKE_COAST);
-	motor_rb.set_brake_mode(E_MOTOR_BRAKE_COAST);
+	motor_rm.set_brake_mode(E_MOTOR_BRAKE_COAST);
 	motor_rf.set_brake_mode(E_MOTOR_BRAKE_COAST);
-	motor_rt.set_brake_mode(E_MOTOR_BRAKE_COAST);
+	motor_rb.set_brake_mode(E_MOTOR_BRAKE_COAST);
+	motor_lm.set_brake_mode(E_MOTOR_BRAKE_COAST);
+	motor_lf.set_brake_mode(E_MOTOR_BRAKE_COAST);
+	motor_lb.set_brake_mode(E_MOTOR_BRAKE_COAST);
 	float power, turn;
 	bool flywheelOn, flywheelPressed = false;
 	bool toggleLift, liftPressed = false;
@@ -369,12 +369,14 @@ void opcontrol()
 		// Get joystick values
 		x = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X);
 		y = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y);
-		turn = 0.6 * (controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) * pow(fabs(controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X)) / (127), 2));
-		power = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y) * pow(fabs(controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y)) / (127), 2);
+		turn = 0.6 * (controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) * pow(fabs(controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X)) / (127), 1));
+		power = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y) * pow(fabs(controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y)) / (127), 1);
 		// chassis.arcade(y, x, 2.7);
 		// Set motor velocities based on joystick inputs and button state
 		leftDrive.move((turn + power));
 		rightDrive.move((power - turn));
+		// leftDrive.move(controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y));
+		// rightDrive.move(controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_Y));
 		// chassis.arcade(y, x, 2.7);
 		// chassis.curvature(y, x, 2.7);
 		// Set intake motor velocity based on button state
