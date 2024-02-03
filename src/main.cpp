@@ -21,7 +21,7 @@ Motor_Group rightDrive({motor_rf, motor_rm, motor_rb});
 Motor_Group leftDrive({motor_lf, motor_lm, motor_lb});
 ADIDigitalOut lift('A');
 ADIDigitalOut hang('B');
-ADIDigitalOut leftwing('C');
+ADIDigitalOut leftwing('G');
 ADIDigitalOut rightwing('H');
 Imu iner(13);
 
@@ -30,7 +30,7 @@ lemlib::Drivetrain drivetrain{
 		&rightDrive, // right drivetrain motors
 		11.4,				 // track width
 		3.25,				 // wheel rpm
-		400,				 // gain
+		600,				 // gain
 		2,					 // chase power
 };
 
@@ -328,9 +328,24 @@ void disrupt_wp()
 	delay(500);
 	intake.move(0);
 }
+
+void near_wp()
+{
+	chassis.setPose(0, 0, 135);
+	chassis.moveToPoint(-7, 7, 750, false);
+	rightwing.set_value(1);
+	chassis.moveToPoint(2, -2, 800);
+	rightwing.set_value(0);
+	chassis.moveToPose(-10, 20, 180, 1500, {forwards : false});
+	chassis.waitUntilDone();
+	leftDrive.move(-127);
+	rightDrive.move(-127);
+	delay(300);
+	chassis.moveToPose(36, -4, 90, 2000);
+}
 void autonomous()
 {
-	disrupt_wp();
+	near_wp();
 }
 
 /**
@@ -361,20 +376,44 @@ void opcontrol()
 	bool toggleLift, liftPressed = false;
 	bool toggleHang, hangPressed = false;
 	bool toggleWings, wingsPressed = false;
+	bool toggleDrive, drivePressed = false;
 	float x, y;
+	bool arcade = true;
 	while (true)
 	{
 
 		// Task screenTask(screen)
 		// Get joystick values
-		x = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X);
-		y = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y);
-		turn = 0.6 * (controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) * pow(fabs(controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X)) / (127), 1));
-		power = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y) * pow(fabs(controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y)) / (127), 1);
-		// chassis.arcade(y, x, 2.7);
-		// Set motor velocities based on joystick inputs and button state
-		leftDrive.move((turn + power));
-		rightDrive.move((power - turn));
+		if (arcade)
+		{
+			x = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X);
+			y = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y);
+			turn = 0.4 * (controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) * pow(fabs(controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X)) / (127), 1));
+			power = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y) * pow(fabs(controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y)) / (127), 1);
+			// chassis.arcade(y, x, 2.7);
+			// Set motor velocities based on joystick inputs and button state
+			leftDrive.move((turn + power));
+			rightDrive.move((power - turn));
+		}
+		else
+		{
+			leftDrive.move(controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y));
+			rightDrive.move(controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_Y));
+		}
+
+		if (controller.get_digital(E_CONTROLLER_DIGITAL_L1))
+		{
+			if (!drivePressed)
+			{
+				arcade = !arcade;
+				drivePressed = true;
+			}
+		}
+		else
+		{
+			drivePressed = false;
+		}
+
 		// leftDrive.move(controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y));
 		// rightDrive.move(controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_Y));
 		// chassis.arcade(y, x, 2.7);
