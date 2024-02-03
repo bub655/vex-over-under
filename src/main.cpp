@@ -331,18 +331,47 @@ void disrupt_wp()
 
 void near_wp()
 {
-	chassis.setPose(0, 0, 135);
-	chassis.moveToPoint(-7, 7, 750, false);
-	rightwing.set_value(1);
-	chassis.moveToPoint(2, -2, 800);
-	rightwing.set_value(0);
-	chassis.moveToPose(-10, 20, 180, 1500, {forwards : false});
+	// chassis.setPose(0, 0, 135);
+	// chassis.moveToPoint(-8, 8, 1000, false);
+	// chassis.waitUntilDone();
+	// rightwing.set_value(1);
+	// chassis.moveToPoint(3, -3, 800);
+	// chassis.turnTo(10, -3, 500);
+	// chassis.waitUntilDone();
+	// rightwing.set_value(0);
+	// chassis.moveToPose(-10, 20, 180, 1500, {forwards : false});
+	// chassis.waitUntilDone();
+	// leftDrive.move(-127);
+	// rightDrive.move(-127);
+	// delay(300);
+	// chassis.moveToPose(40, -4, 90, 2000);
+	chassis.setPose(0, 0, 0);
+	leftwing.set_value(1);
+	chassis.turnTo(-5, 0, 500);
+	chassis.turnTo(-5, 2, 300);
+	chassis.moveToPoint(-8, 0, 750);
 	chassis.waitUntilDone();
-	leftDrive.move(-127);
-	rightDrive.move(-127);
-	delay(300);
+	leftwing.set_value(0);
+	chassis.moveToPose(-13.5, 20, 0, 1500);
+	chassis.waitUntilDone();
+	leftDrive.move(127);
+	rightDrive.move(127);
+	delay(500);
+	chassis.moveToPose(4, -4, -90, 1500, {forwards : false});
+	chassis.turnTo(10, -4, 800);
 	chassis.moveToPose(36, -4, 90, 2000);
 }
+
+void push_ball()
+{
+	chassis.setPose(0, 0, 0);
+	leftDrive.move(127);
+	rightDrive.move(127);
+	delay(2000);
+	leftDrive.move(0);
+	rightDrive.move(0);
+}
+
 void autonomous()
 {
 	near_wp();
