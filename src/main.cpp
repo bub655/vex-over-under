@@ -15,8 +15,8 @@ Motor motor_rb(6, E_MOTOR_GEARSET_06, true);
 Motor motor_lf(7, E_MOTOR_GEARSET_06, true);
 Motor motor_lm(8, E_MOTOR_GEARSET_06, true);
 Motor motor_lb(9, E_MOTOR_GEARSET_06, false);
-Motor left_intake(18, true);
-Motor right_intake(15, false);
+Motor left_intake(20, true);
+Motor right_intake(16, false);
 Motor_Group intake({left_intake, right_intake});
 Motor flywheel(11, true);
 Motor_Group rightDrive({motor_rf, motor_rm, motor_rb});
@@ -25,7 +25,7 @@ ADIDigitalOut lift('A');
 ADIDigitalOut hang('B');
 ADIDigitalOut leftwing('G');
 ADIDigitalOut rightwing('H');
-Imu iner(13);
+Imu iner(17);
 
 lemlib::Drivetrain drivetrain{
 		&leftDrive,	 // left drivetrain motors
@@ -350,19 +350,30 @@ void near_wp()
 	// chassis.moveToPose(40, -4, 90, 2000);
 	chassis.setPose(0, 0, 0);
 	leftwing.set_value(1);
-	chassis.turnTo(-5, 0, 500);
-	chassis.turnTo(-5, 2, 300);
-	chassis.moveToPoint(-8, 0, 750);
+	chassis.turnTo(-5, 0, 750);
 	chassis.waitUntilDone();
 	leftwing.set_value(0);
-	chassis.moveToPose(-13.5, 20, 0, 1500);
+	chassis.turnTo(10, -5, 1000);
 	chassis.waitUntilDone();
-	leftDrive.move(127);
-	rightDrive.move(127);
-	delay(500);
-	chassis.moveToPose(4, -4, -90, 1500, {forwards : false});
-	chassis.turnTo(10, -4, 800);
-	chassis.moveToPose(36, -4, 90, 2000);
+	// chassis.turnTo(-5, 2, 300);
+	// chassis.moveToPoint(-8, 0, 750);
+	// chassis.waitUntilDone();
+	// leftwing.set_value(0);
+	// chassis.moveToPose(-13.5, 24, 0, 1500);
+
+	// chassis.waitUntilDone();
+	// intake.move(-127);
+	// leftDrive.move(127);
+	// rightDrive.move(127);
+	// delay(500);
+	// intake.move(0);
+	// chassis.moveToPose(4, -4, -90, 1500, {forwards : false});
+	// chassis.turnTo(10, -4, 800);
+	intake.move(-127);
+	chassis.moveToPose(35, -8, 90, 2500);
+	chassis.waitUntilDone();
+	delay(400);
+	intake.move(0);
 }
 
 void push_ball()
@@ -420,8 +431,8 @@ void opcontrol()
 		{
 			x = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X);
 			y = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y);
-			turn = 0.4 * (controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X) * pow(fabs(controller.get_analog(E_CONTROLLER_ANALOG_LEFT_X)) / (127), 1));
-			power = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y) * pow(fabs(controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y)) / (127), 1);
+			turn = 0.55 * (x * pow(fabs(x) / (127), 2));
+			power = y * pow(fabs(y) / (127), 1);
 			// chassis.arcade(y, x, 2.7);
 			// Set motor velocities based on joystick inputs and button state
 			leftDrive.move((turn + power));
@@ -429,8 +440,12 @@ void opcontrol()
 		}
 		else
 		{
-			leftDrive.move(controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y));
-			rightDrive.move(controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_Y));
+			x = controller.get_analog(E_CONTROLLER_ANALOG_LEFT_Y);
+			y = controller.get_analog(E_CONTROLLER_ANALOG_RIGHT_Y);
+			x = (x * pow(fabs(x) / (127), 2));
+			y = y * pow(fabs(y) / (127), 2);
+			leftDrive.move(x);
+			rightDrive.move(y);
 		}
 
 		if (controller.get_digital(E_CONTROLLER_DIGITAL_L1))
