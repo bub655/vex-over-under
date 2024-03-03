@@ -51,9 +51,9 @@ largeError, largeErrorTimeout, slew
 
 // forward/backward PID
 lemlib::ControllerSettings lateralSettings{
-		20,		// kP
+		40,		// kP
 		0,		// kI
-		30,		// kD
+		50,		// kD
 		10,		// windupRange
 		0.25, // smallErrorRange
 		300,	// smallErrorTimeout
@@ -95,6 +95,7 @@ void screenTask()
 		pros::lcd::print(2, "y: %f in", pose.y);						// print the y position
 		pros::lcd::print(3, "heading: %f deg", pose.theta); // print the heading
 		pros::delay(10);
+
 		// lcd::print(0, "x: %f", pose.x);						// print the x position
 		// lcd::print(1, "y: %f", pose.y);						// print the y position
 		// lcd::print(2, "heading: %f", pose.theta); // print the heading
@@ -137,23 +138,73 @@ void competition_initialize() {}
 
 void skills()
 {
-	flywheel.set_brake_mode(MOTOR_BRAKE_COAST);
-	flywheel.move(120);
+
+	chassis.setPose(0, 0, 150);
+	chassis.moveToPose(-9, 18, 180, 1750, {forwards : false});
+	chassis.waitUntilDone();
+	leftDrive.move(-127);
+	rightDrive.move(-127);
+	delay(300);
+	chassis.moveToPose(0, 7, 90, 1500);
+	chassis.moveToPose(-15, 12, 72, 2500, {forwards : false});
+	chassis.waitUntilDone();
+	intake.move(-127);
+	delay(25000);
+	chassis.moveToPoint(chassis.getPose().x + 51.5, chassis.getPose().y + 15, 4000);
+	// // leftwing.set_value(1);
+	chassis.waitUntilDone();
+	chassis.turnTo(chassis.getPose().x, 100, 800);
+	chassis.moveToPoint(chassis.getPose().x, 92, 2500);
+	chassis.waitUntilDone();
+	chassis.moveToPoint(chassis.getPose().x, 80, 1000, false);
+	chassis.moveToPoint(chassis.getPose().x, 93, 1000);
+	chassis.moveToPoint(chassis.getPose().x, 75, 1250, false);
+	chassis.moveToPose(20, 120, 180, 3500, {forwards : false});
+	chassis.waitUntilDone();
+	chassis.turnTo(chassis.getPose().x + 20, chassis.getPose().y, 1000);
+	chassis.waitUntilDone();
+	chassis.setPose(-34.563, 59.3, 99.543);
+	chassis.follow(bowl_txt, 12, 4000);
+	chassis.waitUntilDone();
+	leftDrive.move(127);
+	rightDrive.move(127);
+	delay(500);
+	leftDrive.move(-127);
+	rightDrive.move(-127);
+	delay(300);
+	leftDrive.move(127);
+	rightDrive.move(127);
+	delay(500);
+	leftDrive.move(-127);
+	rightDrive.move(-127);
+	delay(300);
+	leftDrive.move(0);
+	rightDrive.move(0);
+	chassis.moveToPose(61.877, 22.252, 86.649, 600);
+	chassis.setPose(61.877, 22.252, 86.649);
+	chassis.follow(first_txt, 12, 4000);
+}
+void old_skills()
+{
+	intake.set_brake_modes(MOTOR_BRAKE_COAST);
+	intake.move(127);
 	chassis.setPose(0, 0, -30);
-	chassis.moveToPoint(-20, 32, 1200);
+	chassis.moveToPoint(-15, 32, 1200);
 	chassis.waitUntilDone();
-	chassis.moveToPose(-20, 10, 70, 1750, {forwards : false});
-	// delay(500);
+	chassis.moveToPose(-17, 10, 80, 1750, {forwards : false});
 	chassis.waitUntilDone();
-	// delay(30000);
+	delay(25000);
+
 	// flywheel.brake();
 
 	chassis.setPose(-58.071, -45.246, 70);
+	// intake.move(-127);
 	leftwing.set_value(1);
 	chassis.follow(bowl_txt, 12, 4250);
 	chassis.waitUntilDone();
+	intake.move(0);
 	leftwing.set_value(0);
-	intake.set_brake_modes(MOTOR_BRAKE_COAST);
+	// intake.set_brake_modes(MOTOR_BRAKE_COAST);
 	leftDrive.move(127);
 	rightDrive.move(127);
 	delay(500);
@@ -180,119 +231,141 @@ void skills()
 	chassis.follow(fourth_txt, 12, 2000);
 }
 
-void wp_5ball()
+void rush_5ball()
 {
 	// BALL 1
 	intake.move(127);
 	chassis.setPose(0, 0, 0);
-	chassis.moveToPose(-9, 51, -10, 1200);
-	chassis.moveToPoint(-8, 45, 500);
+	chassis.moveToPose(-9, 50, -10, 1200);
+	chassis.waitUntilDone();
+	chassis.moveToPoint(-8, 44, 500);
+	delay(100);
+	intake.move(0);
 	chassis.waitUntilDone();
 	chassis.turnTo(20, 45, 500);
 	chassis.waitUntilDone();
 	intake.move(-127);
-	chassis.moveToPoint(18, 45, 600);
+	chassis.moveToPoint(21, 45, 800);
 	chassis.moveToPoint(0, 45, 450, false);
 	//  BALL 2
 	chassis.waitUntilDone();
 	intake.move(127);
-	chassis.moveToPose(-34, 30, -90, 1650);
+	chassis.moveToPose(-30, 25, -90, 1750);
 	chassis.waitUntilDone();
-	chassis.moveToPose(2, -6, 50, 1650, {forwards : false});
+	delay(300);
+	intake.move(0);
+	chassis.moveToPose(5, -10, 50, 2000, {forwards : false});
 	chassis.waitUntilDone();
 	intake.move(-127);
 	delay(300);
 
 	// // BALL 3 (under elevation bar)
-	chassis.turnTo(-24, -6, 700);
+	chassis.turnTo(-22, -11, 700);
 	chassis.waitUntilDone();
 	intake.move(127);
-	chassis.moveToPoint(-24, -6, 1000);
+	chassis.moveToPoint(-22, -11, 1000);
+	chassis.waitUntilDone();
+	delay(300);
+	intake.move(0);
 	chassis.waitUntilDone();
 
-	// take out matchload ball
-	chassis.moveToPoint(-4, -6, 1000, false);
-	chassis.turnTo(10, -2, 800);
-	chassis.moveToPose(19, 4, 20, 1500);
-	chassis.waitUntilDone();
+	// // take out matchload ball
+	chassis.moveToPoint(8, -10, 1000, false);
+	chassis.turnTo(12, -6, 800);
+	// chassis.moveToPose(19, 0, 20, 1500);
+	// chassis.waitUntilDone();
 
-	chassis.turnTo(19, 30, 800);
-	chassis.waitUntilDone();
-	rightwing.set_value(true);
-	intake.move(-127);
-	leftDrive.move(120);
-	rightDrive.move(127);
-	delay(800);
-	leftDrive.move(-127);
-	rightDrive.move(-127);
-	delay(400);
-	leftDrive.move(127);
-	rightDrive.move(127);
-	delay(800);
-	// // chassis.moveToPoint(20, 26, 750);
-	// // chassis.moveToPoint(20, 12, 500);
+	// chassis.turnTo(19, 30, 800);
+	// chassis.waitUntilDone();
+	// rightwing.set_value(true);
+	// intake.move(-127);
+	// leftDrive.move(120);
+	// rightDrive.move(127);
+	// delay(800);
+	// leftDrive.move(-127);
+	// rightDrive.move(-127);
+	// delay(400);
+	// leftDrive.move(127);
+	// rightDrive.move(127);
+	// delay(800);
 }
 
 void disrupt_wp()
 {
-	// steal ball
+	// steal center ball
 	intake.move(127);
 	chassis.setPose(0, 0, 10);
-	chassis.moveToPoint(9, 44.5, 1750);
+	chassis.moveToPoint(9, 42, 1400);
 	chassis.waitUntilDone();
-	chassis.moveToPoint(8, 44, 1000, false);
+	// outtake to bowl
+	// chassis.moveToPoint(8, 27, 1000, false);
+	// delay(100);
+	// intake.move(0);
+	// chassis.waitUntilDone();
+	// chassis.turnTo(2, 0, 800);
+	// delay(300);
+	// intake.move(-127);
+	// chassis.waitUntilDone();
+	// leftDrive.move(-50);
+	// rightDrive.move(-50);
+	// delay(400);
+	// get barrier ball
+	// chassis.turnTo(29, 30, 800);
+	// chassis.waitUntilDone();
+	// intake.move(127);
+	// chassis.moveToPose(31, 40.5, 30, 1700);
+	// chassis.waitUntilDone();
 
-	chassis.turnTo(20, 43, 800);
+	// delay(200);
+	// intake.move(0);
+
+	// go to matchload
+	chassis.moveToPose(-23, 9, 90, 2250, {forwards : false});
+	delay(300);
+	intake.move(0);
 	chassis.waitUntilDone();
-	leftDrive.move(127);
-	rightDrive.move(127);
-	rightwing.set_value(1);
-	delay(150);
-	chassis.turnTo(chassis.getPose().x - 2, chassis.getPose().y + 10, 800);
+	chassis.turnTo(-3, -5, 800);
 	chassis.waitUntilDone();
-	rightwing.set_value(0);
-	leftDrive.move(0);
-	rightDrive.move(-127);
 	delay(200);
+	rightwing.set_value(1);
+	chassis.moveToPoint(-3, -5, 1000);
+	chassis.waitUntilDone();
+	leftDrive.move(-127);
+	rightDrive.move(127);
+	delay(200);
+	leftDrive.move(0);
 	rightDrive.move(0);
-
-	chassis.moveToPose(-20, 3, 30, 2750, {forwards : false});
+	chassis.turnTo(0, -6, 600);
+	delay(200);
+	rightwing.set_value(0);
+	chassis.waitUntilDone();
+	intake.move(-127);
+	chassis.moveToPose(15, -6, 90, 1500);
+	chassis.waitUntilDone();
+	chassis.moveToPoint(-4.3, -6, 2000, false);
 	chassis.waitUntilDone();
 	intake.move(0);
-	chassis.turnTo(50, 5, 1000);
-	chassis.moveToPoint(45, 5, 750);
-
-	// alliance ball score
-	// chassis.turnTo(10, 0, 800);
-	// chassis.waitUntilDone();
-	// intake.move(-50);
-	// delay(200);
-	// chassis.turnTo(-10, 0, 800);
-	// chassis.waitUntilDone();
-	// intake.move(0);
-	// chassis.moveToPose(-20, 21, -10, 1700, {forwards : false});
-	// chassis.waitUntilDone();
-	// leftDrive.move(-127);
-	// rightDrive.move(-127);
-	// delay(300);
-	// // dematchload
-	// leftwing.set_value(1);
-	// chassis.moveToPose(-0, -1, -90, 3000);
-	// delay(300);
-	// chassis.waitUntilDone();
-
-	// touch bar
-	// chassis.turnTo(10, -7, 800);
-	// leftwing.set_value(0);
-	// chassis.moveToPose(32, -10, 90, 4200);
-	// chassis.waitUntilDone();
-	// intake.move(-127);
-	// rightDrive.move(0);
-	// leftDrive.move(0);
-	// delay(500);
-	// intake.move(0);
 }
 
+void near_wp_score()
+{
+	chassis.setPose(0, 0, 135);
+	chassis.moveToPoint(-4, 4, 750, false);
+	chassis.waitUntilDone();
+	rightwing.set_value(1);
+	chassis.waitUntilDone();
+	leftDrive.move(-127);
+	rightDrive.move(127);
+	delay(300);
+	rightwing.set_value(0);
+	chassis.moveToPose(-10, 20, 180, 1500, {forwards : false});
+	chassis.waitUntilDone();
+	leftDrive.move(-127);
+	rightDrive.move(-127);
+	delay(300);
+	chassis.moveToPose(5, 0, 110, 1500);
+	chassis.moveToPose(38, -9, 90, 2000);
+};
 void near_wp()
 {
 	// chassis.setPose(0, 0, 135);
@@ -349,7 +422,7 @@ void push_ball()
 
 void autonomous()
 {
-	disrupt_wp();
+	skills();
 }
 
 /**
@@ -381,8 +454,10 @@ void opcontrol()
 	bool toggleHang, hangPressed = false;
 	bool toggleWings, wingsPressed = false;
 	bool toggleDrive, drivePressed = false;
+	bool toggleIntake = false;
 	float x, y;
 	bool arcade = true;
+
 	while (true)
 	{
 
@@ -430,8 +505,14 @@ void opcontrol()
 		if (controller.get_digital(E_CONTROLLER_DIGITAL_R1))
 		{
 			intake.move(127);
+			toggleIntake = false;
 		}
 		else if (controller.get_digital(E_CONTROLLER_DIGITAL_R2))
+		{
+			intake.move(-127);
+			toggleIntake = false;
+		}
+		else if (toggleIntake)
 		{
 			intake.move(-127);
 		}
@@ -462,7 +543,6 @@ void opcontrol()
 		{
 			flywheelPressed = false;
 		}
-
 		// Enable hang if arrow key is pressed
 		if (controller.get_digital(E_CONTROLLER_DIGITAL_L2) || controller.get_digital(E_CONTROLLER_DIGITAL_B))
 		{
@@ -528,12 +608,17 @@ void opcontrol()
 		if (toggleWings)
 		{
 			leftwing.set_value(1);
-			rightwing.set_value(1);
+			// rightwing.set_value(1);
 		}
 		else
 		{
-			rightwing.set_value(0);
+			// rightwing.set_value(0);
 			leftwing.set_value(0);
+		}
+
+		if (controller.get_digital(E_CONTROLLER_DIGITAL_Y))
+		{
+			toggleIntake = true;
 		}
 		delay(20); // Typical delay in an opcontrol loop
 	}
