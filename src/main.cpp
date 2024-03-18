@@ -8,6 +8,8 @@ ASSET(first_txt);
 ASSET(second_txt);
 ASSET(third_txt);
 ASSET(fourth_txt);
+ASSET(fifth_txt);
+ASSET(sixth_txt);
 
 Controller controller(E_CONTROLLER_MASTER);
 Motor motor_rf(4, E_MOTOR_GEARSET_06, false);
@@ -17,7 +19,7 @@ Motor motor_lf(7, E_MOTOR_GEARSET_06, true);
 Motor motor_lm(8, E_MOTOR_GEARSET_06, true);
 Motor motor_lb(9, E_MOTOR_GEARSET_06, false);
 Motor left_intake(20, true);
-Motor right_intake(16, false);
+Motor right_intake(13, false);
 Motor_Group intake({left_intake, right_intake});
 Motor flywheel(11, true);
 Motor_Group rightDrive({motor_rf, motor_rm, motor_rb});
@@ -138,51 +140,113 @@ void competition_initialize() {}
 
 void skills()
 {
-
-	chassis.setPose(0, 0, 150);
+	intake.set_brake_modes(MOTOR_BRAKE_COAST);
+	chassis.setPose(0, 0, 135);
 	chassis.moveToPose(-9, 18, 180, 1750, {forwards : false});
 	chassis.waitUntilDone();
 	leftDrive.move(-127);
 	rightDrive.move(-127);
 	delay(300);
-	chassis.moveToPose(0, 7, 90, 1500);
-	chassis.moveToPose(-15, 12, 72, 2500, {forwards : false});
+	chassis.moveToPose(0, 14, 90, 1500);
+	chassis.moveToPose(-15.5, 11, 75, 2500, {forwards : false});
 	chassis.waitUntilDone();
 	intake.move(-127);
-	delay(25000);
-	chassis.moveToPoint(chassis.getPose().x + 51.5, chassis.getPose().y + 15, 4000);
-	// // leftwing.set_value(1);
+	delay(28000);
+	intake.brake();
+	chassis.moveToPoint(chassis.getPose().x + 50, chassis.getPose().y + 15, 4000);
+	// leftwing.set_value(1);
 	chassis.waitUntilDone();
-	chassis.turnTo(chassis.getPose().x, 100, 800);
-	chassis.moveToPoint(chassis.getPose().x, 92, 2500);
+	chassis.turnTo(chassis.getPose().x - 4, -10, 100);
+	chassis.moveToPoint(chassis.getPose().x + 3, 90, 2500, false);
 	chassis.waitUntilDone();
-	chassis.moveToPoint(chassis.getPose().x, 80, 1000, false);
-	chassis.moveToPoint(chassis.getPose().x, 93, 1000);
-	chassis.moveToPoint(chassis.getPose().x, 75, 1250, false);
-	chassis.moveToPose(20, 120, 180, 3500, {forwards : false});
+	leftDrive.move(-127);
+	rightDrive.move(-127);
+	delay(400);
+	leftDrive.move(50);
+	rightDrive.move(50);
+	delay(400);
+	leftDrive.move(-127);
+	rightDrive.move(-127);
+	delay(300);
+	leftDrive.move(50);
+	rightDrive.move(50);
+	delay(200);
+	chassis.moveToPose(6, 115, 0, 3500);
 	chassis.waitUntilDone();
-	chassis.turnTo(chassis.getPose().x + 20, chassis.getPose().y, 1000);
+	// leftwing.set_value(1);
+	chassis.turnTo(chassis.getPose().x + 30, chassis.getPose().y + 9, 1500);
 	chassis.waitUntilDone();
-	chassis.setPose(-34.563, 59.3, 99.543);
-	chassis.follow(bowl_txt, 12, 4000);
+	intake.tare_position();
+	intake.move_absolute(-1000, 127);
+	delay(2000);
+	intake.set_brake_modes(MOTOR_BRAKE_HOLD);
+	intake.brake();
+	chassis.waitUntilDone();
+	chassis.setPose(-33.651, 58.73, 98.774);
+	chassis.follow(bowl_txt, 12, 3750);
+	chassis.waitUntilDone();
+	intake.set_brake_modes(MOTOR_BRAKE_COAST);
+	leftDrive.move(127);
+	rightDrive.move(127);
+	delay(600);
+	leftDrive.move(-75);
+	rightDrive.move(-75);
+	delay(200);
+	chassis.moveToPose(61.877, 22.252, 86.649, 2500);
+	chassis.setPose(61.877, 22.252, 180);
+	chassis.follow(first_txt, 12, 3000, false);
+	chassis.turnTo(chassis.getPose().x - 20, chassis.getPose().y, 800);
+	chassis.waitUntilDone();
+	leftwing.set_value(1);
+	rightwing.set_value(1);
+	chassis.follow(second_txt, 12, 4000);
 	chassis.waitUntilDone();
 	leftDrive.move(127);
 	rightDrive.move(127);
 	delay(500);
-	leftDrive.move(-127);
-	rightDrive.move(-127);
-	delay(300);
+	leftDrive.move(-50);
+	rightDrive.move(-50);
+	delay(250);
 	leftDrive.move(127);
 	rightDrive.move(127);
 	delay(500);
-	leftDrive.move(-127);
-	rightDrive.move(-127);
-	delay(300);
 	leftDrive.move(0);
 	rightDrive.move(0);
-	chassis.moveToPose(61.877, 22.252, 86.649, 600);
-	chassis.setPose(61.877, 22.252, 86.649);
-	chassis.follow(first_txt, 12, 4000);
+	leftwing.set_value(0);
+	rightwing.set_value(0);
+	chassis.setPose(49.793, 0.365, 93.242);
+	chassis.follow(third_txt, 12, 4000, false);
+	chassis.waitUntilDone();
+	leftwing.set_value(1);
+	rightwing.set_value(1);
+	chassis.follow(fourth_txt, 12, 4000);
+	chassis.waitUntilDone();
+	leftDrive.move(127);
+	rightDrive.move(127);
+	delay(500);
+	leftDrive.move(0);
+	rightDrive.move(0);
+	leftwing.set_value(0);
+	rightwing.set_value(0);
+	chassis.follow(fifth_txt, 12, 4000, false);
+	chassis.waitUntilDone();
+	chassis.follow(sixth_txt, 12, 4000);
+	chassis.waitUntilDone();
+	leftDrive.move(127);
+	rightDrive.move(127);
+	delay(500);
+	leftDrive.move(-75);
+	rightDrive.move(-75);
+	delay(400);
+	rightwing.set_value(1);
+	leftDrive.move(127);
+	rightDrive.move(127);
+	delay(800);
+	leftDrive.move(-127);
+	rightDrive.move(-127);
+	delay(400);
+	leftDrive.move(0);
+	rightDrive.move(0);
 }
 void old_skills()
 {
@@ -420,7 +484,20 @@ void push_ball()
 	rightDrive.move(0);
 }
 
-void autonomous()
+void one_ball()
+{
+	chassis.setPose(0, 0, 30);
+	// chassis.moveToPose(15, 30, 0, 1500);
+	// chassis.waitUntilDone();
+	intake.move(127);
+	leftDrive.move(127);
+	rightDrive.move(127);
+	delay(900);
+	leftDrive.move(0);
+	rightDrive.move(0);
+	intake.move(0);
+}
+void autonomous() // Ashwath was here
 {
 	skills();
 }
@@ -504,12 +581,12 @@ void opcontrol()
 		// Set intake motor velocity based on button state
 		if (controller.get_digital(E_CONTROLLER_DIGITAL_R1))
 		{
-			intake.move(127);
+			intake.move(-127);
 			toggleIntake = false;
 		}
 		else if (controller.get_digital(E_CONTROLLER_DIGITAL_R2))
 		{
-			intake.move(-127);
+			intake.move(127);
 			toggleIntake = false;
 		}
 		else if (toggleIntake)
@@ -607,13 +684,13 @@ void opcontrol()
 
 		if (toggleWings)
 		{
-			leftwing.set_value(1);
+			rightwing.set_value(1);
 			// rightwing.set_value(1);
 		}
 		else
 		{
 			// rightwing.set_value(0);
-			leftwing.set_value(0);
+			rightwing.set_value(0);
 		}
 
 		if (controller.get_digital(E_CONTROLLER_DIGITAL_Y))
